@@ -1,8 +1,9 @@
 import express from "express";
 import mongoose from "mongoose";
 import http from "http";
-import ChatRoom from "./dbSchema.js";
+import ChatRoom from './chatRoomSchema.js'
 import { Server } from "socket.io";
+import 'dotenv/config'
 import cors from "cors";
 
 const app = express();
@@ -15,27 +16,19 @@ const io = new Server(server, {
   }
 });
 
-// DO NOT FORGET TO DOTENV !!!
-const uri =
-  "mongodb+srv://ramoj745admin:75369854123@cluster0.lnmir.mongodb.net/dispochat?retryWrites=true&w=majority&appName=Cluster0";
+// MONGODB CONNECTION
+const uri = process.env.MONGO_URI
 
-mongoose
-  .connect(uri)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch(() => console.error("Could not connect to MongoDB"));
+try {
+  await mongoose.connect(uri)
+  console.log("Connected to MongoDB")
+} catch (err) {
+  console.error("Could not connect to MongoDB");
+}
 
+// MIDDLEWARES
 app.use(cors());
 app.use(express.json());
-
-
-const emitRooms = async () => {
-  try {
-    const rooms = await ChatRoom.find();
-    io.emit("updateRooms", rooms);
-  } catch (err) {
-    console.error("Error fetching rooms:", err);
-  }
-};
 
 io.on("connection", (socket) => {
   console.log("New client connected: ", socket.id)
@@ -46,6 +39,15 @@ io.on("connection", (socket) => {
   })
 })
 
+//SOCKET.IO EMIT FUNC
+const emitRooms = async () => {
+  try {
+    const rooms = await ChatRoom.find();
+    io.emit("updateRooms", rooms);
+  } catch (err) {
+    console.error("Error fetching rooms:", err);
+  }
+};
 
 // ROUTES
 app.post("/createRoom", async (req, res) => {
