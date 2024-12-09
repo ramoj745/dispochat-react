@@ -3,7 +3,7 @@ import "./Form.css";
 import dispoChat from "../assets/DispoChat-cropped.svg";
 import Input from "./Input";
 import Button from "./Button";
-import Axios from 'axios'
+import Axios from "axios";
 
 function Form(props) {
   const [roomName, setRoomName] = useState("");
@@ -15,17 +15,21 @@ function Form(props) {
   }
 
   async function onSubmit(event) {
-    event.preventDefault()
-    props.onNavigate()
-    
-    try {
-      const response = await Axios.post("http://localhost:3000/createRoom", {
-        name: roomName,
-        password: roomCode,
-      })
-      console.log(response.data)
-    } catch (err) {
-      console.error(err)
+    event.preventDefault();
+
+    if (!roomName.length) {
+      alert("Room Name is a required field.");
+    } else {
+      try {
+        const response = await Axios.post("http://localhost:3000/createRoom", {
+          name: roomName,
+          password: roomCode,
+        });
+        console.log(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+      props.onNavigate(); // Do logic for passing data from response to ChatRoom here later
     }
   }
 
@@ -38,6 +42,7 @@ function Form(props) {
             onChange={(event) => onEventOfChange(event, setRoomName)}
             value={roomName}
             placeholder="Room Name"
+            required={true}
           ></Input>
           <Input
             onChange={(event) => onEventOfChange(event, setRoomCode)}
@@ -46,7 +51,11 @@ function Form(props) {
           ></Input>
           <p>*Optional</p>
         </div>
-        <Button onClick={onSubmit} style={{ backgroundColor: "#345b63", color: "white" }}>
+        <Button
+          type="submit"
+          onClick={onSubmit}
+          style={{ backgroundColor: "#345b63", color: "white" }}
+        >
           Create Room
         </Button>
       </form>
