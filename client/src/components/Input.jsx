@@ -9,6 +9,7 @@ function Input(props) {
         value={props.value}
         type="text"
         placeholder={props.placeholder}
+        required={props.required}
       >
         {props.children}
       </input>
