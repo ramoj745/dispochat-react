@@ -1,0 +1,25 @@
+.form {
+    background-color: #b5d5c1;
+    width: 550px;
+    height: 350px;
+    border-radius: 30px 30px 30px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.inputs {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    align-items: center;
+    gap: 20px;
+}
+.formImg {
+    position: relative;
+    bottom: 65px;
+}
+p {
+    margin: 0;
+    margin-left: auto;
+    color: black;
+}
