@@ -4,9 +4,9 @@ body, html {
   padding: 0;
 }
 #root {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  height: 100%;
   font-family: "Poppins", serif;
   color: white;
 }
@@ -17,7 +17,9 @@ body, html {
   align-items: center;
   flex-direction: column;
   background-color: #07111c;
+  overflow-y: hidden;
 }
+
 ::-webkit-scrollbar {
   border-radius: 10px;
 }
