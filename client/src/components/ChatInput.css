@@ -1,0 +1,12 @@
+.chat-input {
+    outline: none;
+    border: none;
+    height: 45px;
+    width: 70%;
+    margin: 5px;
+    border-radius: 25px;
+    font-family: "Poppins", serif;
+    font-size: 1.3rem;
+    box-sizing: border-box;
+    padding-left: 10px;
+}

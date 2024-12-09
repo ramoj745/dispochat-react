@@ -1,0 +1,7 @@
+.sender {
+    margin-right: 10px;
+    background-color: #5d9b9e;  
+    color: white;                
+    align-self: flex-end;       
+    border-top-right-radius: 0;  
+}
