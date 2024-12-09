@@ -1,0 +1,26 @@
+.container {
+    background-color: #345b6342;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;    
+    padding-top: 10px;
+    overflow-y: auto;
+    flex: 1;
+}
+.message {
+    max-width: 60%;             
+    padding: 10px 15px;         
+    border-radius: 20px;       
+    font-size: 14px;          
+    line-height: 1.5;           
+}
+.send-message {
+    background-color: #345b6342;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 70px;
+    width: 50%;
+}
