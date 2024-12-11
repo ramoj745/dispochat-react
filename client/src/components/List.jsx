@@ -12,7 +12,7 @@ function List(props) {
         <img src={dispoChat} className="listLogo" width="200"></img>
         <div className="listingWrapper">
           {props.rooms.map((room) => {
-            return <Listing key={room._id}>{room.name}</Listing>;
+            return <Listing key={room._id} roomId={room._id} socket={props.socket}>{room.name}</Listing>;
           })}
         </div>
       </div>
