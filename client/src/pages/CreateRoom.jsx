@@ -6,7 +6,7 @@ function CreateRoom(props) {
 
   return (
     <>
-      <Form onNavigate={props.onNavigate}></Form>
+      <Form onNavigate={props.onNavigate} socket={props.socket}></Form>
     </>
   );
 }

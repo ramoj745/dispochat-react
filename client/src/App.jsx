@@ -51,7 +51,7 @@ function App() {
             navigateJoinRoom={navigateToJoinRoom}
           />
         ) : null}
-        {currentPage === "CreateRoom" ? <CreateRoom onNavigate={navigateToChatRoom}/> : null}
+        {currentPage === "CreateRoom" ? <CreateRoom onNavigate={navigateToChatRoom} socket={socket}/> : null}
         {currentPage === "JoinRoom" ? <JoinRoom rooms={rooms} socket={socket} /> : null}
         {currentPage === "ChatRoom" ? <ChatRoom /> : null}
       </div>

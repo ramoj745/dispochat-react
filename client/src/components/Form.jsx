@@ -24,12 +24,15 @@ function Form(props) {
         const response = await Axios.post("http://localhost:3000/createRoom", {
           name: roomName,
           password: roomCode,
+          clientId: props.socket.id,
         });
-        console.log(response.data);
+        if (response) {
+          props.onNavigate(response.data);
+        } // Do logic for passing data from response to ChatRoom here later
+        // pass data first into chatroom
       } catch (err) {
         console.error(err);
       }
-      props.onNavigate(); // Do logic for passing data from response to ChatRoom here later
     }
   }
 
