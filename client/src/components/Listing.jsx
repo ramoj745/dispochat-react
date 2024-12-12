@@ -4,13 +4,15 @@ import "./Listing.css";
 
 function Listing(props) {
   const roomId = props.roomId;
+  const clientId = props.socket.id
 
   async function onRoomNavigate() {
     const response = await axios.post("http://localhost:3000/getRoom", {
       roomId: roomId,
-      socket: props.socket.id,
+      socket: clientId,
     });
 
+    props.onRoomSelect(roomId)
     console.log(response.data)
   }
 
