@@ -14,7 +14,9 @@ function App() {
 
   const [currentPage, setPage] = useState("LandingPage");
   const [rooms, setRooms] = useState([]);
+  const [currentRoomId, setRoomId] = useState(null)
 
+  //dont mind this, this one is for updating the list component for available rooms
   useEffect(() => {
     socket.on("updateRooms", (updatedRooms) => {
       console.log(updatedRooms);
@@ -36,9 +38,15 @@ function App() {
     console.log("Navigating to Join Room");
   }
 
-  function navigateToChatRoom() {
+  function navigateToChatRoomFromCreate() {
     setPage("ChatRoom")
     console.log("Navigating to Chat Room")
+  }
+
+  function navigateToChatRoomFromJoin(roomId) {
+    socket.emit("joinRoom", roomId);
+    setPage("ChatRoom")
+    setRoomId(roomId)
   }
 
   return (
@@ -51,9 +59,9 @@ function App() {
             navigateJoinRoom={navigateToJoinRoom}
           />
         ) : null}
-        {currentPage === "CreateRoom" ? <CreateRoom onNavigate={navigateToChatRoom} socket={socket}/> : null}
-        {currentPage === "JoinRoom" ? <JoinRoom rooms={rooms} socket={socket} /> : null}
-        {currentPage === "ChatRoom" ? <ChatRoom /> : null}
+        {currentPage === "CreateRoom" ? <CreateRoom onNavigate={navigateToChatRoomFromCreate} socket={socket}/> : null}
+        {currentPage === "JoinRoom" ? <JoinRoom rooms={rooms} socket={socket} onRoomSelect={navigateToChatRoomFromJoin} /> : null}
+        {currentPage === "ChatRoom" ? <ChatRoom socket={socket} roomId={currentRoomId} /> : null}
       </div>
       <Footer />
     </>
