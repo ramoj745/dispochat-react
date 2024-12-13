@@ -1,25 +1,53 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import "./Listing.css";
+import PasswordModal from "./passwordModal";
 
 function Listing(props) {
   const roomId = props.roomId;
-  const clientId = props.socket.id
+  const clientId = props.socket.id;
+
+  const [modal, openModal] = useState(false);
+  const handleOpen = () => openModal(true);
+  const handleClose = () => openModal(false);
 
   async function onRoomNavigate() {
-    const response = await axios.post("http://localhost:3000/getRoom", {
+    const response = await axios.post("http://localhost:3000/joinRoom", {
       roomId: roomId,
-      socket: clientId,
+      clientId: clientId,
+    });
+    const passwordEnabled = response.data.isPasswordProtected
+
+    if (passwordEnabled) {
+      console.log(response.data.message)
+      handleOpen()
+    } else {
+      props.onRoomSelect(roomId)
+    }
+  }
+
+  async function checkPassword(password){
+    const response = await axios.post("http://localhost:3000/joinRoom", {
+      roomId: roomId,
+      clientId: clientId,
+      password: password,
     });
 
-    props.onRoomSelect(roomId)
-    console.log(response.data)
+    const isAuthenticated = response.data.room
+    if (isAuthenticated) {
+      props.onRoomSelect(roomId)
+    } else {
+      console.error(response.data.message)
+    }
   }
 
   return (
-    <div onClick={onRoomNavigate} className="listing">
-      <p className="listingName">{props.children}</p>
-    </div>
+    <>
+    <PasswordModal open={modal} onClose={handleClose} name={props.name} checkPassword={checkPassword}/>
+      <div onClick={onRoomNavigate} className="listing">
+        <p className="listingName">{props.children}</p>
+      </div>
+    </>
   );
 }
 
