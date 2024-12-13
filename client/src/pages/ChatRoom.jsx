@@ -11,7 +11,7 @@ function ChatRoom(props) {
   const inputRef = useRef(null);
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
+  useEffect(() => { //on component mount,
 
     props.socket.on("loadMessages", (messages) => { // load messages from the server
       console.log("Loaded messages from the database:", messages);
