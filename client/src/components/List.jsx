@@ -14,6 +14,7 @@ function List(props) {
               <Listing
                 key={room._id}
                 roomId={room._id}
+                name={room.name}
                 socket={props.socket}
                 onRoomSelect={props.onRoomSelect}
               >
