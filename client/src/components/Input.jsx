@@ -7,6 +7,7 @@ function Input(props) {
       <input
         onChange={props.onChange}
         value={props.value}
+        style={props.style}
         type="text"
         placeholder={props.placeholder}
         required={props.required}
