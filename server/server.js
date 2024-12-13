@@ -36,16 +36,19 @@ io.on("connection", (socket) => {
   console.log("New client connected: ", socket.id);
   emitRooms();
 
-  socket.on("joinRoom", async (roomId) => { //listen if client joined a room
+  socket.on("joinRoom", async (roomId) => {
+    //listen if client joined a room
     socket.join(roomId);
-    console.log("Joined Room", roomId)
+    console.log("Joined Room", roomId);
 
-    const messages = await Message.find({ room: roomId }).sort({ createdAt: 1 }); // on join, load messages from db
-    socket.emit("loadMessages", messages)
-
+    const messages = await Message.find({ room: roomId }).sort({
+      createdAt: 1,
+    }); // on join, load messages from db
+    socket.emit("loadMessages", messages);
   });
 
-  socket.on("newMessage", async (data) => { //listen for any new messages, then emit to specific roomId
+  socket.on("newMessage", async (data) => {
+    //listen for any new messages, then emit to specific roomId
     io.to(data.roomId).emit("newMessage", {
       roomId: data.roomId,
       senderId: data.senderId,
@@ -102,19 +105,28 @@ app.post("/createRoom", async (req, res) => {
   }
 });
 
-app.post("/getRoom", async (req, res) => {
-  const roomId = req.body.roomId;
-  const clientId = req.body.socket; //socket id passed from client
+app.post("/joinRoom", async (req, res) => {
+  const { roomId, clientId, password } = req.body;
 
   const room = await ChatRoom.findOne({ _id: roomId });
 
   if (!room) {
     return res.status(404).json({ message: "Room not found (404)" });
-  } else {
-    room.users.push(clientId);
-    await room.save();
-    res.status(200).json({ message: `User ${clientId} joined the room.`, room });
-  }
+    } else {
+      if (clientId && roomId && !password) {
+        res.status(200).json({message: "Checking password...", isPasswordProtected: room.isPasswordProtected})
+      } else {
+        if (room.isPasswordProtected) {
+          if (password === room.password) {
+            res.status(200).json({message: "User has joined the room.", room})
+          } else {
+            res.status(200).json({message: "Wrong Password"})
+          }
+        } else {
+          res.status(200).json({message: "User has joined the room.", room})
+        }
+      }
+    }
 });
 
 app.post("/sendMessage", async (req, res) => {
@@ -124,12 +136,11 @@ app.post("/sendMessage", async (req, res) => {
     user: senderId,
     room: roomId,
     message: message,
-  })
+  });
 
-  await newMessage.save()
+  await newMessage.save();
 
-  res.status(200).json({message: "Request went through"})
-
+  res.status(200).json({ message: "Request went through" });
 });
 
 server.listen(port, () => {
