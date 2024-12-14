@@ -65,7 +65,12 @@ io.on("connection", (socket) => {
 const emitRooms = async () => {
   try {
     const rooms = await ChatRoom.find();
-    io.emit("updateRooms", rooms);
+
+    const filteredRooms = rooms.map(({_id, name, users}) => ({
+      _id, name, users
+    }))
+
+    io.emit("updateRooms", filteredRooms);
   } catch (err) {
     console.error("Error fetching rooms:", err);
   }
