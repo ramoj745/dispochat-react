@@ -1,23 +1,16 @@
 import React, { useState, forwardRef } from "react";
 import "./ChatInput.css";
 
-const ChatInput = forwardRef(function ChatInput(props, ref) {
-  const [input, setInput] = useState("");
-
-  function onEventOfChange(event) {
-    setInput(event.target.value);
-  }
-
+function ChatInput(props) {
   return (
     <input
       type="text"
-      ref={ref}
-      onChange={onEventOfChange}
-      value={input}
+      onChange={props.onChange}
+      value={props.value}
       className="chat-input"
       placeholder="Enter your message here"
     ></input>
   );
-});
+};
 
 export default ChatInput;
