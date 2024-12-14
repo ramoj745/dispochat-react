@@ -11,15 +11,14 @@ import "./App.css";
 const socket = io("http://localhost:3000");
 
 function App() {
-
   const [currentPage, setPage] = useState("LandingPage");
   const [rooms, setRooms] = useState([]);
-  const [currentRoomId, setRoomId] = useState(null)
+  const [currentRoomId, setRoomId] = useState(null);
 
   //dont mind this, this one is for updating the list component for available rooms
   useEffect(() => {
     socket.on("updateRooms", (updatedRooms) => {
-      console.log(updatedRooms);
+      console.log("List of rooms available:", updatedRooms);
       setRooms(updatedRooms);
     });
 
@@ -39,14 +38,14 @@ function App() {
   }
 
   function navigateToChatRoomFromCreate() {
-    setPage("ChatRoom")
-    console.log("Navigating to Chat Room")
+    setPage("ChatRoom");
+    console.log("Navigating to Chat Room");
   }
 
   function navigateToChatRoomFromJoin(roomId) {
     socket.emit("joinRoom", roomId);
-    setPage("ChatRoom")
-    setRoomId(roomId)
+    setPage("ChatRoom");
+    setRoomId(roomId);
   }
 
   return (
@@ -59,9 +58,22 @@ function App() {
             navigateJoinRoom={navigateToJoinRoom}
           />
         ) : null}
-        {currentPage === "CreateRoom" ? <CreateRoom onNavigate={navigateToChatRoomFromCreate} socket={socket}/> : null}
-        {currentPage === "JoinRoom" ? <JoinRoom rooms={rooms} socket={socket} onRoomSelect={navigateToChatRoomFromJoin} /> : null}
-        {currentPage === "ChatRoom" ? <ChatRoom socket={socket} roomId={currentRoomId} /> : null}
+        {currentPage === "CreateRoom" ? (
+          <CreateRoom
+            onNavigate={navigateToChatRoomFromCreate}
+            socket={socket}
+          />
+        ) : null}
+        {currentPage === "JoinRoom" ? (
+          <JoinRoom
+            rooms={rooms}
+            socket={socket}
+            onRoomSelect={navigateToChatRoomFromJoin}
+          />
+        ) : null}
+        {currentPage === "ChatRoom" ? (
+          <ChatRoom socket={socket} roomId={currentRoomId} />
+        ) : null}
       </div>
       <Footer />
     </>
