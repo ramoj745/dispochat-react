@@ -8,19 +8,27 @@ import { IconButton } from "@mui/material";
 import axios from "axios";
 
 function ChatRoom(props) {
-  const inputRef = useRef(null);
   const [messages, setMessages] = useState([]);
+  const [messageInput, setMessageInput] = useState("");
+  const endOfMessage = useRef(null);
 
-  useEffect(() => { //on component mount,
+  function onEventOfChange(event) {
+    setMessageInput(event.target.value);
+  }
 
-    props.socket.on("loadMessages", (messages) => { // load messages from the server
+  useEffect(() => {
+    //on component mount,
+
+    props.socket.on("loadMessages", (messages) => {
+      // load messages from the server
       console.log("Loaded messages from the database:", messages);
-      setMessages(messages)
+      setMessages(messages);
     });
 
-    props.socket.on("newMessage", (data) => {  //listen for new messages from the server
+    props.socket.on("newMessage", (data) => {
+      //listen for new messages from the server
       if (data.roomId === props.roomId) {
-        setMessages((prevMessages) => [...prevMessages, data]); 
+        setMessages((prevMessages) => [...prevMessages, data]);
       }
     });
 
@@ -28,40 +36,46 @@ function ChatRoom(props) {
       props.socket.off("newMessage");
       props.socket.off("loadMessages");
     };
-  });
+  }, []);
 
-  async function sendMessage() {
-    const message = inputRef.current.value;
-    if (inputRef.current) {
-      console.log("Input Value:", message); 
+  useEffect(() => {
+    if (endOfMessage.current) {
+      endOfMessage.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
+  async function sendMessage(event) {
+    event.preventDefault();
+    setMessageInput("");
+
+    if (messageInput) {
       try {
         if (props.socket.id) {
+          // send message to server to save on db
           await axios.post("http://localhost:3000/sendMessage", {
             roomId: props.roomId,
             senderId: props.socket.id,
-            message: message,
+            message: messageInput,
           });
         }
 
-        props.socket.emit("newMessage", { // emit to server for realtime comms
+        props.socket.emit("newMessage", {
+          // emit to server for realtime comms
           roomId: props.roomId,
           senderId: props.socket.id,
-          message: message,
-        })
-
+          message: messageInput,
+        });
       } catch (err) {
         console.error(err);
       }
-
-      inputRef.current.value = "";
     }
   }
 
   return (
     <>
       <div className="container">
-        {messages.map((message, index) => { //simple check if sender/receiver chat bubble
+        {messages.map((message, index) => {
+          //simple check if sender/receiver chat bubble
           const isSender = message.senderId === props.socket.id;
           return isSender ? (
             <ChatBubbleSender key={index}>{message.message}</ChatBubbleSender>
@@ -71,15 +85,16 @@ function ChatRoom(props) {
             </ChatBubbleReceiver>
           );
         })}
+        <div ref={endOfMessage} />
       </div>
-      <div className="send-message">
-        <ChatInput ref={inputRef} />
+      <form className="send-message" onSubmit={sendMessage}>
+        <ChatInput onChange={onEventOfChange} value={messageInput} />
         <IconButton
+          type="submit"
           sx={{
             width: "70px",
             height: "70px",
           }}
-          onClick={sendMessage}
         >
           <SvgIcon
             sx={{
@@ -104,7 +119,7 @@ function ChatRoom(props) {
             </svg>
           </SvgIcon>
         </IconButton>
-      </div>
+      </form>
     </>
   );
 }
