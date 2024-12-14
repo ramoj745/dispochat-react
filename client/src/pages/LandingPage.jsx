@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./LandingPage.css";
 import dispoChat from "../assets/DispoChat-cropped.svg";
 import Button from "../components/Button";
@@ -6,7 +6,7 @@ import Button from "../components/Button";
 function LandingPage(props) {
 
   return (
-    <>
+    <div className="landingContainer">
       <img src={dispoChat} width="150" />
       <h1>
         Disposable chat rooms, at your <span className="service">service</span>
@@ -18,7 +18,7 @@ function LandingPage(props) {
           Create Room
         </Button>
       </div>
-    </>
+    </div>
   );
 }
 
