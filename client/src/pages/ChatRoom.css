@@ -8,6 +8,12 @@
     padding-top: 10px;
     overflow-y: auto;
     flex: 1;
+    gap: 2px;
+}
+.message-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }
 .message {
     max-width: 60%;             
@@ -24,3 +30,4 @@
     height: 70px;
     width: 50%;
 }
+
