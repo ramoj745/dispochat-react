@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { Modal, Typography, Box } from "@mui/material";
-
 import Input from "./Input";
 import Button from "./Button";
 
 function PasswordModal(props) {
   const [change, setChange] = useState("");
+  const [placeholder, setPlaceholder] = useState("Enter the password");
 
   function handleClose(event, reason) {
     if (reason === "backdropClick") {
@@ -15,9 +15,8 @@ function PasswordModal(props) {
   }
 
   function handleSubmit(event) {
-    event.preventDefault()
-    props.checkPassword(change)
-    
+    event.preventDefault();
+    props.checkPassword(change, setChange, setPlaceholder);
   }
 
   return ReactDOM.createPortal(
@@ -56,29 +55,32 @@ function PasswordModal(props) {
           >
             {props.name} is Password-Enabled
           </Typography>
-          <form onSubmit={handleSubmit} style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "10px"
-          }}>
-          <Typography variant="body" id="modal-body">
-            <Input
-              placeholder={"Enter the password"}
-              style={{ height: "45px" }}
-              onChange={(event) => setChange(event.target.value)}
-              value={change}
-            />
-          </Typography>
-          <Button
+          <form
+            onSubmit={handleSubmit}
             style={{
-              height: "50px",
-              backgroundColor: "#345b63",
-              color: "white",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "10px",
             }}
           >
-            Enter
-          </Button>
+            <Typography variant="body" id="modal-body">
+              <Input
+                placeholder={placeholder}
+                style={{ height: "45px" }}
+                onChange={(event) => setChange(event.target.value)}
+                value={change}
+              />
+            </Typography>
+            <Button
+              style={{
+                height: "50px",
+                backgroundColor: "#345b63",
+                color: "white",
+              }}
+            >
+              Enter
+            </Button>
           </form>
         </Box>
       </Modal>

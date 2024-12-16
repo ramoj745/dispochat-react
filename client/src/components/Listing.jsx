@@ -20,13 +20,13 @@ function Listing(props) {
 
     if (passwordEnabled) {
       console.log(response.data.message)
-      handleOpen()
+      handleOpen() //open password modal if password-enabled
     } else {
       props.onRoomSelect(roomId)
     }
   }
 
-  async function checkPassword(password){
+  async function checkPassword(password, setPassword, setErrMsg){
     const response = await axios.post("http://localhost:3000/joinRoom", {
       roomId: roomId,
       clientId: clientId,
@@ -37,13 +37,20 @@ function Listing(props) {
     if (isAuthenticated) {
       props.onRoomSelect(roomId)
     } else {
+      setPassword("")
+      setErrMsg(response.data.message)
+
+      setTimeout(() => {
+        setErrMsg("Enter your password")
+      }, 1000)
+
       console.error(response.data.message)
     }
   }
 
   return (
     <>
-    <PasswordModal open={modal} onClose={handleClose} name={props.name} checkPassword={checkPassword}/>
+    <PasswordModal open={modal} onClose={handleClose} name={props.name} checkPassword={checkPassword} />
       <div onClick={onRoomNavigate} className="listing">
         <p className="listingName">{props.children}</p>
       </div>
