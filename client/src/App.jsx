@@ -37,8 +37,10 @@ function App() {
     console.log("Navigating to Join Room");
   }
 
-  function navigateToChatRoomFromCreate() {
+  function navigateToChatRoomFromCreate(roomId) {
+    socket.emit("joinRoom", roomId);
     setPage("ChatRoom");
+    setRoomId(roomId);
     console.log("Navigating to Chat Room");
   }
 
@@ -72,7 +74,7 @@ function App() {
           />
         ) : null}
         {currentPage === "ChatRoom" ? (
-          <ChatRoom socket={socket} roomId={currentRoomId} />
+          <ChatRoom socket={socket} roomId={currentRoomId} /> //animations applied to child component
         ) : null}
       </div>
       <Footer />
