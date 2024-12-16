@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import dispoChat from "../assets/DispoChat-cropped.svg";
 import Listing from "./Listing";
 import "./List.css";
