@@ -27,9 +27,9 @@ function Form(props) {
           clientId: props.socket.id,
         });
         if (response) {
-          props.onNavigate(response.data);
+          props.onNavigate(response.data._id);
+          console.log("New room created:", response.data._id)
         } // Do logic for passing data from response to ChatRoom here later
-        // pass data first into chatroom
       } catch (err) {
         console.error(err);
       }
