@@ -1,11 +1,12 @@
 import React from "react";
 import "./ChatBubbleSender.css";
+import { motion } from "motion/react";
 
 function ChatBubbleSender(props) {
   return (
-    <div className="message sender">
+    <motion.div className="message sender" animate={{ x: -5 }}>
       <p>{props.children}</p>
-    </div>
+    </motion.div>
   );
 }
 
