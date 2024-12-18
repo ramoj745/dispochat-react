@@ -107,7 +107,7 @@ app.post("/createRoom", async (req, res) => {
 
 app.post("/joinRoom", async (req, res) => {
   const { roomId, clientId, password } = req.body;
-
+  
   const room = await ChatRoom.findOne({ _id: roomId });
   const passwordEnabled = room.isPasswordProtected;
 
@@ -170,7 +170,6 @@ app.post("/sendMessage", async (req, res) => {
 app.delete("/LeaveRoom/:roomId/user/:clientId", async (req, res) => {
   const clientId = req.params.clientId;
   const roomId = req.params.roomId;
-  emitRooms()
 
   const updatedRoom = await ChatRoom.findOneAndUpdate(
     { _id: roomId },
@@ -180,11 +179,13 @@ app.delete("/LeaveRoom/:roomId/user/:clientId", async (req, res) => {
 
   if (updatedRoom.users.length === 0) {
     const deletedRoom = await ChatRoom.findOneAndDelete({ _id: roomId });
+    emitRooms()
     res.status(200).json({
       message: "No more users left, room deleted successfully",
       deletedRoom,
     });
   } else {
+    emitRooms()
     res.status(200).json({ message: `User ${clientId} has left the room:` });
   }
 });
