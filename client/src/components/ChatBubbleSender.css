@@ -1,7 +1,11 @@
 .sender {
+    max-width: 80%;
     margin-right: 10px;
     background-color: #5d9b9e;  
     color: white;                
     align-self: flex-end;       
-    border-top-right-radius: 0;  
+    border-top-right-radius: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    white-space: normal;    
 }

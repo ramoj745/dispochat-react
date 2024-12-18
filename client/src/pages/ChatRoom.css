@@ -8,7 +8,7 @@
     padding-top: 10px;
     overflow-y: auto;
     flex: 1;
-    gap: 2px;
+    gap: 4px;
 }
 .message-container {
     display: flex;

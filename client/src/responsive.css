@@ -1,0 +1,133 @@
+/* Extra Small (Phones) */
+@media (max-width: 599px) {
+    /* for landing page */
+    .content .landingContainer img {
+        width: 100px;
+    }
+    .content .landingContainer h1{
+        font-size: 1.8rem;
+    }
+    .content .landingContainer .buttons button {
+        width: 150px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    /* for joinroom page */
+    .content .motion-div-join {
+        width: 100%;
+    }
+    .content .motion-div-join img {
+        width: 150px;
+    }
+    .content .motion-div-join .list {
+        height: 370px;
+        width: 100%;
+        border-radius: 0;
+    }
+    .content .motion-div-join .list .listingWrapper {
+        gap: 20px;
+    }
+    .content .motion-div-join .list .listingWrapper .listing {
+        height: 50px;
+    }
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    /* for createroom page */
+    .content .motion-div-create {
+        width: 100%;
+    }
+    .content .motion-div-create .form{
+        width: 100%;
+        border-radius: 0;
+        height: 370px;
+    }
+    .content .motion-div-create img {
+        width: 170px;
+    }
+    .content .motion-div-create .form .inputs {
+        gap: 15px;
+    }
+
+    /* for chatroom page */
+    .content .container {
+        width: 100%;
+    }
+    .content .message-container .send-message {
+        width: 100%;
+    }
+    .content .message-container .send-message input {
+        font-size: 1rem;
+    }
+    footer {
+        justify-content: center;
+    }
+    footer .exit-button {
+        width: 50%;
+    }
+
+  }
+  
+  /* Small (Tablets) */
+  @media (min-width: 600px) and (max-width: 899px) {
+    /* for landing page */
+    .content .landingContainer img {
+        width: 130px;
+    }
+    .content .landingContainer h1{
+        font-size: 2.7rem;
+    }
+    .content .landingContainer .buttons button {
+        width: 150px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    /* for chatroom page */
+    .content .container {
+        width: 100%;
+    }
+    .content .message-container .send-message {
+        width: 100%;
+    }
+    .content .message-container .send-message input {
+        font-size: 1rem;
+    }
+    footer {
+        justify-content: center;
+    }
+    footer .exit-button {
+        width: 30%;
+    }
+  }
+  
+  /* Medium (Laptops) */
+  @media (min-width: 900px) and (max-width: 1199px) {
+    /* for chatroom page */
+    .content .container {
+        width: 80%;
+    }
+    .content .message-container .send-message {
+        width: 80%;
+    }
+    footer {
+        justify-content: center;
+    }
+    footer .exit-button {
+        width: 20%;
+    }
+  }
+  /* Large (Desktops) */
+  @media (min-width: 1200px) {
+    /* for chatroom page */
+    .content .container {
+        width: 70%;
+    }
+    .content .message-container .send-message {
+        width: 70%;
+    }
+    footer .exit-button {
+        width: 12%;
+    }
+  }
+
+  

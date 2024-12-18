@@ -1,6 +1,10 @@
 .receiver {
+    max-width: 80%;
     margin-left: 10px;
     background-color: #f0f0f0;  
     align-self: flex-start;      
-    border-top-left-radius: 0;  
+    border-top-left-radius: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    white-space: normal;   
 }
