@@ -8,6 +8,7 @@ import Axios from "axios";
 function Form(props) {
   const [roomName, setRoomName] = useState("");
   const [roomCode, setRoomCode] = useState("");
+  const backendUrl = import.meta.env.VITE_BACKEND_URL
 
   function onEventOfChange(event, setter) {
     setter(event.target.value);
@@ -21,15 +22,16 @@ function Form(props) {
       alert("Room Name is a required field.");
     } else {
       try {
-        const response = await Axios.post("http://localhost:3000/createRoom", {
+        const response = await Axios.post(`${backendUrl}/createRoom`, {
           name: roomName,
           password: roomCode,
           clientId: props.socket.id,
         });
         if (response) {
-          props.onNavigate(response.data._id);
-          console.log("New room created:", response.data._id)
-        } // Do logic for passing data from response to ChatRoom here later
+          props.onNavigate(response.data._id)
+          console.log("New Room created:", response.data._id)
+
+        }
       } catch (err) {
         console.error(err);
       }
