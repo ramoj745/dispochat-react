@@ -4,8 +4,8 @@ import Listing from "./Listing";
 import "./List.css";
 
 function List(props) {
+
   return (
-    <>
       <div className="list">
         <img src={dispoChat} className="listLogo" width="200"></img>
         <div className="listingWrapper">
@@ -24,7 +24,6 @@ function List(props) {
           })}
         </div>
       </div>
-    </>
   );
 }
 
