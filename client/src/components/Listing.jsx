@@ -13,7 +13,7 @@ function Listing(props) {
   const handleClose = () => openModal(false);
 
   async function onRoomNavigate() {
-    const response = await axios.post("http://192.168.31.41:3000/joinRoom", {
+    const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/joinRoom`, {
       roomId: roomId,
       clientId: clientId,
     });
