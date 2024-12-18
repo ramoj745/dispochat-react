@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 
 function CreateRoom(props) {
   return (
-    <motion.div
+    <motion.div className="motion-div-create"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
