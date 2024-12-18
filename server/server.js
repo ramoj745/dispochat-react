@@ -6,14 +6,13 @@ import { Server } from "socket.io";
 import "dotenv/config";
 import cors from "cors";
 import Message from "./messageSchema.js";
-import User from "./userSchema.js";
 
 const app = express();
 const port = 3000;
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST"],
   },
 });
@@ -32,19 +31,33 @@ try {
 app.use(cors());
 app.use(express.json());
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
   console.log("New client connected: ", socket.id);
-  emitRooms();
+
+  try {
+    // fetch rooms
+    const rooms = await ChatRoom.find();
+    const filteredRooms = rooms.map(({ _id, name, users }) => ({
+      _id,
+      name,
+      users,
+    }));
+
+    io.to(socket.id).emit("updateRooms", filteredRooms);
+  } catch (err) {
+    console.error("Error fetching rooms:", err);
+  }
 
   socket.on("joinRoom", async (roomId) => {
-    //listen if client joined a room
+    //listen if client joined a room, load messages from db
     socket.join(roomId);
     console.log("Joined Room", roomId);
 
     const messages = await Message.find({ room: roomId }).sort({
       createdAt: 1,
-    }); // on join, load messages from db
+    });
     socket.emit("loadMessages", messages);
+    socket.emit("JoinRoom", { roomId: roomId, clientId: socket.id });
   });
 
   socket.on("newMessage", async (data) => {
@@ -56,55 +69,32 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
     console.log("Client disconnected.", socket.id);
   });
 });
 
-//SOCKET.IO EMIT FUNC
-const emitRooms = async () => {
-  try {
-    const rooms = await ChatRoom.find();
-
-    const filteredRooms = rooms.map(({_id, name, users}) => ({
-      _id, name, users
-    }))
-
-    io.emit("updateRooms", filteredRooms);
-  } catch (err) {
-    console.error("Error fetching rooms:", err);
-  }
-};
-
 // ROUTES
+
+app.get("/", (req, res) => {
+  res.json("Connected!")
+})
+
 app.post("/createRoom", async (req, res) => {
   const { name, password, clientId } = req.body;
 
-  const newRoom = new ChatRoom({
-    name: name,
-    password: password ? password : undefined,
-    isPasswordProtected: !!password,
-    users: [clientId],
-  });
-
-  const existingUser = await User.findOne({
-    username: clientId,
-  });
-
   try {
-    if (!existingUser) {
-      const newRoomCreator = await User({
-        username: clientId,
-      });
-      await newRoomCreator.save();
-      console.log("Creating room...");
-      await newRoom.save();
-      emitRooms();
-      res.status(201).json(newRoom);
-      console.log("Room Created!");
-    } else {
-      res.json({ message: "Error: User already exists" });
-    }
+    const newRoom = new ChatRoom({
+      name: name,
+      password: password ? password : undefined,
+      isPasswordProtected: !!password,
+      users: [clientId],
+    });
+
+    console.log("Creating room...");
+    await newRoom.save();
+    res.status(201).json(newRoom);
+    console.log("Room Created!");
   } catch (err) {
     console.error(err);
   }
@@ -114,24 +104,48 @@ app.post("/joinRoom", async (req, res) => {
   const { roomId, clientId, password } = req.body;
 
   const room = await ChatRoom.findOne({ _id: roomId });
+  const passwordEnabled = room.isPasswordProtected;
 
   if (!room) {
     return res.status(404).json({ message: "Room not found (404)" });
-    } else {
-      if (clientId && roomId && !password) {
-        res.status(200).json({message: "Checking password...", isPasswordProtected: room.isPasswordProtected})
+  } else {
+    if (clientId && roomId && !password) {
+      // first request (checking if password enabled)
+      if (!passwordEnabled) {
+        // if not, immediately add user to db, and send boolean for rendering in client
+        await ChatRoom.findOneAndUpdate(
+          { _id: roomId },
+          { $addToSet: { users: clientId } },
+          { new: true }
+        );
+
+        res.status(200).json({
+          isPasswordProtected: room.isPasswordProtected,
+        });
       } else {
-        if (room.isPasswordProtected) {
-          if (password === room.password) {
-            res.status(200).json({message: "User has joined the room.", room})
-          } else {
-            res.status(200).json({message: "Wrong Password"})
-          }
+        res.status(200).json({
+          message: "Checking password...",
+          isPasswordProtected: room.isPasswordProtected,
+        });
+      }
+    } else {
+      // for second request (from password modal)
+
+      if (passwordEnabled) {
+        if (password === room.password) {
+          await ChatRoom.findOneAndUpdate(
+            { _id: roomId },
+            { $addToSet: { users: clientId } },
+            { new: true }
+          );
+
+          res.status(200).json({ message: "User has joined the room.", room });
         } else {
-          res.status(200).json({message: "User has joined the room.", room})
+          res.status(200).json({ message: "Wrong Password" });
         }
       }
     }
+  }
 });
 
 app.post("/sendMessage", async (req, res) => {
@@ -146,6 +160,27 @@ app.post("/sendMessage", async (req, res) => {
   await newMessage.save();
 
   res.status(200).json({ message: "Request went through" });
+});
+
+app.delete("/LeaveRoom/:roomId/user/:clientId", async (req, res) => {
+  const clientId = req.params.clientId;
+  const roomId = req.params.roomId;
+
+  const updatedRoom = await ChatRoom.findOneAndUpdate(
+    { _id: roomId },
+    { $pull: { users: clientId } },
+    { new: true }
+  );
+
+  if (updatedRoom.users.length === 0) {
+    const deletedRoom = await ChatRoom.findOneAndDelete({ _id: roomId });
+    res.status(200).json({
+      message: "No more users left, room deleted successfully",
+      deletedRoom,
+    });
+  } else {
+    res.status(200).json({ message: `User ${clientId} has left the room:` });
+  }
 });
 
 server.listen(port, () => {
