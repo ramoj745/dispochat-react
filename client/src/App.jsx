@@ -5,17 +5,18 @@ import LandingPage from "./pages/LandingPage.jsx";
 import CreateRoom from "./pages/CreateRoom.jsx";
 import JoinRoom from "./pages/JoinRoom.jsx";
 import ChatRoom from "./pages/ChatRoom.jsx";
+import "./responsive.css"
 import io from "socket.io-client";
 import "./App.css";
 
-const socket = io("http://localhost:3000");
+const socket = io(import.meta.env.VITE_BACKEND_URL);
 
 function App() {
   const [currentPage, setPage] = useState("LandingPage");
   const [rooms, setRooms] = useState([]);
   const [currentRoomId, setRoomId] = useState(null);
 
-  //dont mind this, this one is for updating the list component for available rooms
+  // updating the list component for available rooms
   useEffect(() => {
     socket.on("updateRooms", (updatedRooms) => {
       console.log("List of rooms available:", updatedRooms);
@@ -50,6 +51,10 @@ function App() {
     setRoomId(roomId);
   }
 
+  function navigateToLandingPage(landingPage) {
+    setPage(landingPage)
+  }
+
   return (
     <>
       <Header />
@@ -74,10 +79,10 @@ function App() {
           />
         ) : null}
         {currentPage === "ChatRoom" ? (
-          <ChatRoom socket={socket} roomId={currentRoomId} /> //animations applied to child component
+          <ChatRoom socket={socket} roomId={currentRoomId} />
         ) : null}
       </div>
-      <Footer />
+      <Footer socket={socket} roomId={currentRoomId} onLeave={navigateToLandingPage}/>
     </>
   );
 }
