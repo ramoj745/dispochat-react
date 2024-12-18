@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./Listing.css";
-import PasswordModal from "./passwordModal";
+import PasswordModal from "./PasswordModal";
 
 function Listing(props) {
   const roomId = props.roomId;
