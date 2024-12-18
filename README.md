@@ -155,7 +155,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ### Acknowledgments
 
-Special thanks to **ChatGPT** for helping me through the challenges and to the countless online resources that made this project possible.
+Special thanks to **Christeen Solis** for helping and designing with the UI/UX.
 
 > "Explore. Dream. Discover."
 
