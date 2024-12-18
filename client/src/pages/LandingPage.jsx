@@ -18,13 +18,13 @@ function LandingPage(props) {
       <div className="buttons">
         <Button
           onClick={props.navigateJoinRoom}
-          style={{ backgroundColor: "#ffffff" }}
+          style={{ backgroundColor: "#ffffff", color: "black" }}
         >
           Join Room
         </Button>
         <Button
           onClick={props.navigateCreateRoom}
-          style={{ backgroundColor: "#d4ecdd" }}
+          style={{ backgroundColor: "#d4ecdd", color: "black" }}
         >
           Create Room
         </Button>
