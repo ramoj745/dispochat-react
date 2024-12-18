@@ -12,6 +12,7 @@ function ChatRoom(props) {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
   const endOfMessage = useRef(null);
+  const backendUrl = import.meta.env.VITE_BACKEND_URL
 
   function onEventOfChange(event) {
     setMessageInput(event.target.value);
@@ -53,7 +54,7 @@ function ChatRoom(props) {
       try {
         if (props.socket.id) {
           // send message to server to save on db
-          await axios.post("http://localhost:3000/sendMessage", {
+          await axios.post(`${backendUrl}/sendMessage`, {
             roomId: props.roomId,
             senderId: props.socket.id,
             message: messageInput,
