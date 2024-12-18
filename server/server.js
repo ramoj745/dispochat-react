@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import http from "http";
-import ChatRoom from "./ChatRoomSchema.js";
+import ChatRoom from "./chatRoomSchema.js";
 import { Server } from "socket.io";
 import "dotenv/config";
 import cors from "cors";
