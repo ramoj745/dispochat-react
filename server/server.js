@@ -36,14 +36,7 @@ io.on("connection", async (socket) => {
 
   try {
     // fetch rooms
-    const rooms = await ChatRoom.find();
-    const filteredRooms = rooms.map(({ _id, name, users }) => ({
-      _id,
-      name,
-      users,
-    }));
-
-    io.to(socket.id).emit("updateRooms", filteredRooms);
+    emitRooms()
   } catch (err) {
     console.error("Error fetching rooms:", err);
   }
@@ -74,6 +67,17 @@ io.on("connection", async (socket) => {
   });
 });
 
+async function emitRooms() {
+  const rooms = await ChatRoom.find();
+  const filteredRooms = rooms.map(({ _id, name, users }) => ({
+    _id,
+    name,
+    users,
+  }));
+
+  io.emit("updateRooms", filteredRooms);
+}
+
 // ROUTES
 
 app.get("/", (req, res) => {
@@ -82,6 +86,7 @@ app.get("/", (req, res) => {
 
 app.post("/createRoom", async (req, res) => {
   const { name, password, clientId } = req.body;
+  emitRooms()
 
   try {
     const newRoom = new ChatRoom({
@@ -90,7 +95,7 @@ app.post("/createRoom", async (req, res) => {
       isPasswordProtected: !!password,
       users: [clientId],
     });
-
+    
     console.log("Creating room...");
     await newRoom.save();
     res.status(201).json(newRoom);
@@ -165,6 +170,7 @@ app.post("/sendMessage", async (req, res) => {
 app.delete("/LeaveRoom/:roomId/user/:clientId", async (req, res) => {
   const clientId = req.params.clientId;
   const roomId = req.params.roomId;
+  emitRooms()
 
   const updatedRoom = await ChatRoom.findOneAndUpdate(
     { _id: roomId },
