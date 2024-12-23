@@ -68,7 +68,6 @@
    - Password prompt (if applicable) or direct entry.
 
 4. **Chat Room:**
-   - List of current users.
    - Chatbox for sending messages.
    - "End Room" button to close the chat room.
 
