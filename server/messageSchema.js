@@ -7,5 +7,7 @@ const messageSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now },
 });
 
+messageSchema.index({ timestamp: 1 }, { expireAfterSeconds: 86400 });
+
 const message = mongoose.model("Message", messageSchema);
 export default message;
