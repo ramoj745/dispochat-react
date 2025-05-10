@@ -12,7 +12,7 @@ const port = 3000;
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL,
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
@@ -36,7 +36,7 @@ io.on("connection", async (socket) => {
 
   try {
     // fetch rooms
-    emitRooms()
+    emitRooms();
   } catch (err) {
     console.error("Error fetching rooms:", err);
   }
@@ -81,12 +81,12 @@ async function emitRooms() {
 // ROUTES
 
 app.get("/", (req, res) => {
-  res.json("Connected!")
-})
+  res.json("Connected!");
+});
 
 app.post("/createRoom", async (req, res) => {
   const { name, password, clientId } = req.body;
-  emitRooms()
+  emitRooms();
 
   try {
     const newRoom = new ChatRoom({
@@ -95,7 +95,7 @@ app.post("/createRoom", async (req, res) => {
       isPasswordProtected: !!password,
       users: [clientId],
     });
-    
+
     console.log("Creating room...");
     await newRoom.save();
     res.status(201).json(newRoom);
@@ -107,7 +107,7 @@ app.post("/createRoom", async (req, res) => {
 
 app.post("/joinRoom", async (req, res) => {
   const { roomId, clientId, password } = req.body;
-  
+
   const room = await ChatRoom.findOne({ _id: roomId });
   const passwordEnabled = room.isPasswordProtected;
 
@@ -146,7 +146,7 @@ app.post("/joinRoom", async (req, res) => {
 
           res.status(200).json({ message: "User has joined the room.", room });
         } else {
-          res.status(200).json({ message: "Wrong Password" });
+          res.status(200).json({ message: "Wrong Password", incorrectPassword: true });
         }
       }
     }
@@ -179,16 +179,27 @@ app.delete("/LeaveRoom/:roomId/user/:clientId", async (req, res) => {
 
   if (updatedRoom.users.length === 0) {
     const deletedRoom = await ChatRoom.findOneAndDelete({ _id: roomId });
-    emitRooms()
+    emitRooms();
     res.status(200).json({
       message: "No more users left, room deleted successfully",
       deletedRoom,
     });
   } else {
-    emitRooms()
+    emitRooms();
     res.status(200).json({ message: `User ${clientId} has left the room:` });
   }
 });
+
+// For terminal based UI
+app.get("/getRoomList", async (req, res) => {
+    const rooms = await ChatRoom.find();
+    const filteredRooms = rooms.map(({ _id, name, users }) => ({
+      _id,
+      name,
+      users,
+    }));
+    res.status(200).json(filteredRooms);
+  });
 
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
